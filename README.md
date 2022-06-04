@@ -39,13 +39,11 @@ https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html
  ---
  ## 2. Radar Tracking ver.3   
  Radar Tracking version 3 is in *radar_tracking/src/ti_mmwave_rospkg/src/RadarTrackingVer3.py*
- ### Flowchart
- <img src="https://user-images.githubusercontent.com/97038348/171993981-cad844ed-e7bb-42bb-8fd5-7b0668c1118b.PNG" width="90%" height="90%"/>
   
- ### Process diagram
+ ### Procedure diagram
  <img src="https://user-images.githubusercontent.com/97038348/171998821-6995030f-f9a5-4386-ae7f-9dbc83f568b4.PNG" width="80%" height="80%"/>
   
- ### Process 1 and 2: Obtain the points from Radar (IWR6843ISK)   
+ ### Procedure 1 and 2: Obtain the points from Radar (IWR6843ISK)   
  The values (point id, x position, y position, time) of detected points are subscribed from the ti_mmwave_rospkg.   
  
         * Package name: ti_mmwave_rospkg  
@@ -114,7 +112,18 @@ https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html
  For obtaining the velocity of object, **"Velocity Window set"** is defined.     
  <img src="https://user-images.githubusercontent.com/97038348/171998888-52feb3a8-3c36-4343-ae83-b6500b11a136.PNG" width="80%" height="80%"/>   
 
+ Velocity Window set contain k number of "velocity window".    
+ The number of velocity window is equal to the number of window.   
+ Each velocity window has 2 number of "Elements".
+ Element is 1 x 5 matrix which contains *'filtered position'* and *'filtered velocity'* and time.   
  
+ Velocity is obtained by following equation.   
+ <img src="https://user-images.githubusercontent.com/97038348/171999080-032e8dd4-ff5c-46da-b057-ef81c3418164.PNG" width="60%" height="60%"/>   
+
+ Velocity window is also deleted with window, depending on skip count.
+ 
+ ### Flowchart
+ <img src="https://user-images.githubusercontent.com/97038348/171993981-cad844ed-e7bb-42bb-8fd5-7b0668c1118b.PNG" width="90%" height="90%"/>
  
  
  
