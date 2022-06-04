@@ -159,21 +159,16 @@ install numpy and sklearn!
     $ sudo chmod a+rw /dev/ttyUSB0
  
  ### 5.2 Parameter Setting
-you have to set the parameters depending on what you want to detect. 
-For example, if you want to detect car, then objectSize would be big.    
-If you want to detect rabbit, then the objectSize would be small   
-     
-   
-     
- #### Radar Tracking version 2  
- &nbsp;&nbsp;&nbsp;&nbsp; *# You can set these values by adjusting the PARAMETER in RadarTrackingVer2.py* 
+ #### Radar Tracking version 3  
+ *# You can set these values by adjusting the PARAMETER in RadarTrackingVer3.py*    
  
- <img src="https://user-images.githubusercontent.com/97038348/168715439-9b1a7074-5f56-476c-8430-5cb68311338d.png" width="30%" height="30%"/>
+ <img src="https://user-images.githubusercontent.com/97038348/171999329-1d3ae5b6-bcbe-40c9-92e7-fd58616bb606.png" width="30%" height="30%"/>
 
  * **objectSize** = eps for Clustering
- * **filteringRange** = eps for ClusteringFilter
+ * **filteringRange** = maximum distance for filtering
+ * **zeroCnt** = the number of point id = 0
  * **sizeOfWindow** = number of elements in window
- * **maxNumOfSkip** = the number of maximum skip count of window. If skip count over this number, that window will be deleted.
+ * **maxNumOfSkip** = the number of maximum skip count of window.   
  * **filterMode** =
    * 0: Simple moving average
    * 1: Weighted moving average
@@ -212,21 +207,9 @@ RadarTracking.py publish following topic
                     Vx: x-velocity of the object
                     Vy: y-velocity of the object
                     Vz: z-velocity of the object (= 0)
- 
- 
-        
-
 
     
-### Reference
+#### Reference
  
 https://dev.ti.com/  (Explore/ Resource Explorer/ Software/ mmWave Sensors/ Industrial Toolbox/ Labs/ Robotics/ ROS Driver)
     
- 
- 
- 
- 
- 
- 
- 
-  
