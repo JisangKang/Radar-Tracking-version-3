@@ -29,23 +29,6 @@
 
 
 <img src="https://user-images.githubusercontent.com/97038348/164665803-93d061e6-0b21-4176-8621-e106bf3c597f.png" width="30%" height="30%"/>
-
-### Attributes
- * **core_sample_indices_**: Indices of core samples
- * **components_**: Copy of each core sample found by training
- * **labels_**: Cluster labels for each point in the dataset given to fit(). Noisy samples are give the label -1
- 
-
-### Examples
-    
-    from sklearn.cluster import DBSCAN
-    import numpy as np
-    
-    model = DBSCAN(eps=0.5, min_samples=1)
-    # vector array
-    data = np.array([[1,1],[2,0],[3,0],[1,0]])       
-    Clustering = model.fit_predict(data)
-    print(Clustering)
     
 ### Reference
  
@@ -60,7 +43,7 @@ https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html
  <img src="https://user-images.githubusercontent.com/97038348/171993981-cad844ed-e7bb-42bb-8fd5-7b0668c1118b.PNG" width="90%" height="90%"/>
   
  ### Process diagram
- <img src="https://user-images.githubusercontent.com/97038348/171994089-372dbeb9-e91a-4843-b7bf-2a422c0772cf.PNG" width="90%" height="90%"/>
+ <img src="https://user-images.githubusercontent.com/97038348/171998821-6995030f-f9a5-4386-ae7f-9dbc83f568b4.PNG" width="80%" height="80%"/>
   
  ### Process 1 and 2: Obtain the points from Radar (IWR6843ISK)   
  The values (point id, x position, y position, time) of detected points are subscribed from the ti_mmwave_rospkg.   
@@ -79,40 +62,63 @@ https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html
  #### Coordinate
 <img src="https://user-images.githubusercontent.com/97038348/170430559-b56a5096-7a4c-40f0-bca2-26d9a74ec548.PNG" width="30%" height="30%"/>
  
- #### Specification
-Detection range in radial axis : 175(car), 98(person) [m]
-
-Range resolution : 0.039 ~ 0.044 [m]
-
-Azimuth angle of detection : ±60 [deg]
-
-Elevation angle of detection : ±20 [deg]
-
-Angular resolution (Azimuth) : 20 [deg]
-
-Angular resolution (Elevation) : 58 [deg]
-
-Maximum radial velocity : 9.59 [m/s]
-
-(Note: Radial velocity represents how fast object go close or far from RADAR. It does not contain transverse velocity.)
-   
-   #### Reference 
-   https://www.ti.com/design-resources/embedded-development/industrial-mmwave-radar-sensors.html#Evaluation
  
  ### Procedure 3 and 4: Clustering the points from Radar and Finding Center point   
- Point id =0 is the criterian for separating current and previous points.    
+ Point id = 0 is the criterian for separating current and previous points.    
  When the point id is 0, add 1 to zeroCount.      
  When the zeroCount exceed the maximum, the getPoint (Array) is clustered.    
-  
- #### Clustering
- The eps for **Clustering** should be the size of one object.    
-<img src="https://user-images.githubusercontent.com/97038348/171994633-eb68152c-2fef-42bb-83bf-3e02092563fc.PNG" width="50%" height="50%"/>
-  
  The center point from **Clustering** is assigned to the *'centerPoint'*   
- currentTime (from radar) is the average of the time of getTime (Array).   
+ currentTime (from radar) is the average of the time of getTime (Array).     
+  #### Clustering
+ The eps for **Clustering** should be the size of one object(*'objectSize'*).    
+<img src="https://user-images.githubusercontent.com/97038348/171994633-eb68152c-2fef-42bb-83bf-3e02092563fc.PNG" width="60%" height="60%"/>
   
  ### Procedure 5: Moving average Filter
- *'centerPoint'* is not always same with real center of object.
- This is called "radar error".
+ Because radar detect the points within the object randomly, *'centerPoint'* is not always same with real center of object.    
+ This is called **"radar error"**.   
+ <img src="https://user-images.githubusercontent.com/97038348/171995897-370df870-c9b4-475e-be44-f477a44dd348.PNG" width="60%" height="60%"/>
+ 
+ The sum of radar errors of many points would be zero.   
+ Therefore, radar error can be reduced by moving average filter.    
+ <img src="https://user-images.githubusercontent.com/97038348/171996822-1e6a86e3-3d42-45fb-8a96-d03f650d19de.PNG" width="60%" height="60%"/>
+ 
+ #### Formula of moving average filter
+ There are Simple moving average and Weighted moving average formula to calculate the average.    
+<img src="https://user-images.githubusercontent.com/97038348/171997469-01d313bb-7445-4bef-b084-3dac229f0ce4.png" width="70%" height="70%"/>
+ 
+ ##### Reference
+ https://en.wikipedia.org/wiki/Moving_average
+ 
+ #### Window Set
+ For making the moving average filter, **"Window set"** is defined.     
+ <img src="https://user-images.githubusercontent.com/97038348/171997105-a192346a-4612-4eb2-b6da-2f6a8ab323cc.PNG" width="80%" height="80%"/>
+ 
+ Window set contain k number of "window".   
+ The number of window is equal to the number of objects currently observed.    
+ Each window has n number of "Elements".    
+ Element is 1 x 2 matrix which contains *'centerPoint'*.    
+ 
+ When the *'centerPoint'* is obtained from previous procedures, the distance is calculated between *'centerPoint'* and first element of each window.      
+ If the minimum of distances is smaller than maximum(*'filteringRange'*), the *'centerPoint'* becomes the first element of window and the previous elements of window are going down one by one.     
+ <img src="https://user-images.githubusercontent.com/97038348/171998588-6382b350-b69e-475c-87ce-6ffbca47bd92.PNG" width="60%" height="60%"/>   
+
+ The *'filtered position'* is obtained by calculating a moving average to that window.     
+ 
+ If the minimum of distances is larger than *'filteringRange'*, the new window is created.   
+ 
+ "skip count" is for deleting noise and old window which is not updated for long time.    
+ When window is updated, skip count becomes 0. When window is not updated, 1 is added to skip count.       
+ When the skip count exceeds the maximum number of skip count(*'maxNumOfSkip'*), the window would be deleted.    
+ 
+ ### Procedure 6: Obtaining velocity
+ For obtaining the velocity of object, **"Velocity Window set"** is defined.     
+ <img src="https://user-images.githubusercontent.com/97038348/171998888-52feb3a8-3c36-4343-ae83-b6500b11a136.PNG" width="80%" height="80%"/>   
+
+ 
+ 
+ 
+ 
+ 
+ 
  
   
