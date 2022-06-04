@@ -4,8 +4,7 @@
 
 1. [Clustering](#1-clustering)
 2. [Radar Tracking ver.3](#2-radar-tracking-ver3)
-3. [Experiments](#3-experiments)
-4. [Running on ROS](#4-running-on-ros)
+3. [Running on ROS](#3-running-on-ros)
 
 ---
 ---
@@ -124,6 +123,106 @@ https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html
  
  ### Flowchart
  <img src="https://user-images.githubusercontent.com/97038348/171993981-cad844ed-e7bb-42bb-8fd5-7b0668c1118b.PNG" width="90%" height="90%"/>
+ 
+ ---
+ ---
+ ## 3. Running on ROS
+   TI mmWave's IWR6843ISK is used for this radar tracking.   
+    <img src="https://user-images.githubusercontent.com/97038348/169230164-4c639ac4-2d81-40c8-93e9-5b02415d1502.png" width="30%" height="30%"/>
+   
+   
+ ### 5.1 Set up
+
+install numpy and sklearn!
+
+    $ sudo apt install python3-pip
+    $ sudo pip3 install numpy
+    $ sudo pip3 install scikit-learn
+   
+ git clone
+   
+    $ cd ~
+    $ git clone https://github.com/nabihandres/RADAR_Cluster-and-tracking.git
+   
+ catkin make
+   
+    $ cd ~/RADAR_Cluster-and-tracking/radar_tracking
+    $ catkin_make
+    $ source devel/setup.bash
+   
+ add dialout to have acess to the serial ports on Linux 
+   
+    $ sudo adduser <your_username> dialout
+   
+ allow permission to serial port. (with connecting radar by usb port)
+   
+    $ sudo chmod a+rw /dev/ttyUSB0
+ 
+ ### 5.2 Parameter Setting
+you have to set the parameters depending on what you want to detect. 
+For example, if you want to detect car, then objectSize would be big.    
+If you want to detect rabbit, then the objectSize would be small   
+     
+   
+     
+ #### Radar Tracking version 2  
+ &nbsp;&nbsp;&nbsp;&nbsp; *# You can set these values by adjusting the PARAMETER in RadarTrackingVer2.py* 
+ 
+ <img src="https://user-images.githubusercontent.com/97038348/168715439-9b1a7074-5f56-476c-8430-5cb68311338d.png" width="30%" height="30%"/>
+
+ * **objectSize** = eps for Clustering
+ * **filteringRange** = eps for ClusteringFilter
+ * **sizeOfWindow** = number of elements in window
+ * **maxNumOfSkip** = the number of maximum skip count of window. If skip count over this number, that window will be deleted.
+ * **filterMode** =
+   * 0: Simple moving average
+   * 1: Weighted moving average
+   * 2: Current-Weighted moving average
+ * **weight** = weight for Current-Weighted moving average
+     
+     
+ ### 5.3 Run the Radar Tracking
+ 
+launch and get the data from radar
+
+    $ roslaunch ti_mmwave_rospkg 6843_multi_3d_0.launch
+    
+rosrun the RadarTracking.py
+
+    $ rosrun ti_mmwave_rospkg RadarTrackingVer2.py
+    
+        
+        
+RadarTracking.py publish following topic     
+    
+    Published Topic : /object_tracking
+    
+    msg Type : object_msgs/Objects
+ 
+        Objects - [Object 1, Object 2, ... ]
+ 
+    msg Type : Object_msgs/Object
+ 
+        name - object number in Window Set
+        position - [X, Y, Z]  
+                    X: x-coordinate of the object
+                    Y: y-coordinate of the object
+                    Z: z-coordinate of the object (= 0)
+        velocity - [Vx, Vy, Vz]  
+                    Vx: x-velocity of the object
+                    Vy: y-velocity of the object
+                    Vz: z-velocity of the object (= 0)
+ 
+ 
+        
+
+
+    
+### Reference
+ 
+https://dev.ti.com/  (Explore/ Resource Explorer/ Software/ mmWave Sensors/ Industrial Toolbox/ Labs/ Robotics/ ROS Driver)
+    
+ 
  
  
  
