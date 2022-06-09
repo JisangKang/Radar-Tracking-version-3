@@ -1,0 +1,30 @@
+<package>
+  <name>object_msgs</name>
+  <version>1.0.0</version>
+  <description>Messages used by nodes in the object stack.</description>
+  <maintainer email="wltkd789@gmail.com">Jisang Kang</maintainer>
+
+  <license>OOO</license>
+
+  
+  <!-- <url type="bugtracker"></url> -->
+
+  <author>Jisang Kang</author>
+
+  <!-- Dependencies which this package needs to build itself. -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- Dependencies needed to compile this package. -->
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+
+  <!-- Dependencies needed after this package is compiled. -->
+  <run_depend>std_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+<!-- <export>
+    <cpp cflags="-I${prefix}/msg/cpp -I${prefix}/srv/cpp"/>
+</export>
+ -->
+</package>
