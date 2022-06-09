@@ -114,7 +114,7 @@ https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html
  Velocity Window set contain k number of "velocity window".    
  The number of velocity window is equal to the number of window.   
  Each velocity window has 2 number of "Elements".
- Element is 1 x 5 matrix which contains *'filtered position'* and *'filtered velocity'* and time.   
+ Element is 1 x 2 matrix which contains *'filtered position'* and *'filtered velocity'* and time.   
  
  Velocity is obtained by following equation.   
  <img src="https://user-images.githubusercontent.com/97038348/171999080-032e8dd4-ff5c-46da-b057-ef81c3418164.PNG" width="60%" height="60%"/>   
