@@ -146,7 +146,7 @@ install numpy and sklearn!
    
  catkin make
    
-    $ cd ~/RADAR_Cluster-and-tracking/radar_tracking
+    $ cd ~/Radar-Tracking-version-3/radar_tracking
     $ catkin_make
     $ source devel/setup.bash
    
