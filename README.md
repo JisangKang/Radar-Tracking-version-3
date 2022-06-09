@@ -184,7 +184,7 @@ launch and get the data from radar
     
 rosrun the RadarTracking.py
 
-    $ rosrun ti_mmwave_rospkg RadarTrackingVer2.py
+    $ rosrun ti_mmwave_rospkg RadarTrackingVer3.py
     
         
         
